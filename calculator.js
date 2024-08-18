@@ -18,11 +18,12 @@ class Calculator {
 
     handleOperator(operator) {
         if (this.operator) {
-            this.calculate();
+            this.calculate(); // If there's an existing operator, calculate first
         }
         this.operator = operator;
         this.previousInput = this.currentInput;
-        this.currentInput = '0';
+        this.currentInput += operator; // Append the operator to the current input
+
     }
 
     handleTrigonometricOrLog(functionName) {
@@ -71,30 +72,31 @@ class Calculator {
     calculate() {
         let result;
         const num1 = parseFloat(this.previousInput);
-        const num2 = this.operator === 'sin' || this.operator === 'cos' || this.operator === 'tan' || this.operator === 'log' || this.operator === 'ln'
+        const num2 = ['sin', 'cos', 'tan', 'log', 'ln'].includes(this.operator)
             ? parseFloat(this.currentInput.split('(')[1]?.replace(')', '')) :
-            this.operator === '^' ? parseFloat(this.currentInput.split('^')[1]) :
-                this.operator === '√' ? parseFloat(this.currentInput.split('√')[1].split('(')[1].replace(')', '')) :
-                    this.operator === '%' ? parseFloat(this.currentInput?.split('%')[0]) :
-                        this.operator === 'π' ? parseFloat(this.currentInput?.split('π')[0]) :
-                            parseFloat(this.previousInput);
+            ['+', '-', '÷', '×'].includes(this.operator) ? parseFloat(this.currentInput.substring(this.previousInput.length + 1)) :
+                this.operator === '^' ? parseFloat(this.currentInput.split('^')[1]) :
+                    this.operator === '√' ? parseFloat(this.currentInput.split('√')[1].split('(')[1].replace(')', '')) :
+                        this.operator === '%' ? parseFloat(this.currentInput?.split('%')[0]) :
+                            this.operator === 'π' ? parseFloat(this.currentInput?.split('π')[0]) :
+                                parseFloat(this.previousInput);
 
         switch (this.operator) {
             case '+':
-                result = num1 + parseFloat(this.currentInput);
+                result = num1 + num2;
                 break;
             case '-':
-                result = num1 - parseFloat(this.currentInput);
+                result = num1 - num2;
                 break;
             case '÷':
-                if (parseFloat(this.currentInput) === 0) {
+                if (parseFloat(num2) === 0) {
                     result = "Error";
                 } else {
-                    result = num1 / parseFloat(this.currentInput);
+                    result = num1 / num2;
                 }
                 break;
             case '×':
-                result = num1 * parseFloat(this.currentInput);
+                result = num1 * num2;
                 break;
             case 'sin':
                 result = parseFloat(Math.sin(num2 * Math.PI / 180)).toFixed(4); // Convert to degree
